@@ -2,6 +2,7 @@ package br.com.breno.convidados.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -21,12 +22,13 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
         mViewModel = ViewModelProvider(this).get(GuestFormViewModel::class.java)
 
         setListeners()
+        observe()
     }
 
     override fun onClick(view: View) {
        val id = view.id
         if (id == R.id.btnSave) {
-
+            Log.d("Button", "Button Clicked")
             val name = edtName.text.toString()
             val presence = rdio_presence.isChecked
 
@@ -45,6 +47,7 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
             } else {
                 Toast.makeText(applicationContext, "Falha", Toast.LENGTH_SHORT).show()
             }
+            finish()
         })
     }
 
