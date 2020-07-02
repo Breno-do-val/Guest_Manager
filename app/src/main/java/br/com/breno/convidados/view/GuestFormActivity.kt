@@ -9,11 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import br.com.breno.convidados.viewModel.GuestFormViewModel
 import br.com.breno.convidados.R
+import br.com.breno.convidados.constants.GuestConstants
 import kotlinx.android.synthetic.main.activity_guest_form.*
+import kotlinx.android.synthetic.main.row_guest.*
 
 class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var mViewModel: GuestFormViewModel
+    private var mGuestId : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +26,9 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
 
         setListeners()
         observe()
+        loadData()
+
+        rdio_presence.isChecked = true
     }
 
     override fun onClick(view: View) {
@@ -32,7 +38,15 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
             val name = edtName.text.toString()
             val presence = rdio_presence.isChecked
 
-            mViewModel.save(name, presence)
+            mViewModel.save(mGuestId, name, presence)
+        }
+    }
+
+    private fun loadData() {
+        val bundle = intent.extras
+        if(bundle != null) {
+            mGuestId = bundle.getInt(GuestConstants.GUESTID)
+            mViewModel.load(mGuestId)
         }
     }
 
@@ -48,6 +62,15 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
                 Toast.makeText(applicationContext, "Falha", Toast.LENGTH_SHORT).show()
             }
             finish()
+        })
+
+        mViewModel.guest.observe(this, Observer {
+            edtName.setText(it.name)
+            if (it.presence) {
+                rdio_presence.isChecked = true
+            } else {
+                rdio_absent.isChecked = true
+            }
         })
     }
 
